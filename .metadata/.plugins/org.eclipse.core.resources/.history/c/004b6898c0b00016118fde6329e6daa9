@@ -1,0 +1,37 @@
+public class SolutionWithNoSynchronization implements MemoryWrapper{
+
+    private MemorySegment _memory = null;
+
+    public SolutionWithNoSynchronization(){
+	_memory = new MemorySegment();
+    }
+
+    public void read(Process p){
+    	p.setState("wantread");
+    	try {
+			wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	p.setState("reading");
+    	_memory.read();	
+    	notifyAll();
+    	p.setState("idle");
+    	notifyAll();
+    }
+
+    public void write(Process p){
+    	p.setState("wantwrite");
+    	try {
+			wait();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	p.setState("writing");
+    	_memory.write();
+    	p.setState("idle");
+    	notify();
+    }
+}

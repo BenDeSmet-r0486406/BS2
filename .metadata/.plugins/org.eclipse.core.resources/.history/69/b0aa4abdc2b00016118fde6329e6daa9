@@ -1,0 +1,25 @@
+
+public class SolutionWithSynchronization {
+	private MemorySegment _memory = null;
+
+    public SolutionWithSynchronization(){
+	_memory = new MemorySegment();
+    }
+
+    public void read(Process p){
+    	p.setState("wantread");
+    	while(p.getState()=="writing"){
+    		wait();
+    	}
+    	p.setState("reading");
+    	_memory.read();	
+    	p.setState("idle");
+    }
+
+    public void write(Process p){
+    	p.setState("wantwrite");
+    	p.setState("writing");
+    	_memory.write();
+    	p.setState("idle");
+    }
+}
